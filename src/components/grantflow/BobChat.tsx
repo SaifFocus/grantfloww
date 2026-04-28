@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { MessageCircle, X, Send, Sparkles, Hammer } from "lucide-react";
+import { MessageCircle, X, Send, Sparkles, Hammer, RotateCcw } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
