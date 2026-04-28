@@ -222,15 +222,21 @@ ${scraped
   )
   .join("\n---")}
 
-Return JSON: {"grants":[{"name":"","funder":"","amount":"","deadline":"","region":"","eligibility":["",""],"fitReason":"","sourceUrl":""}]}
+Return JSON: {"grants":[{"name":"","funder":"","amount":"","deadline":"","region":"","eligibility":["",""],"fitScore":0,"fitReason":"","sourceUrl":""}]}
 
 Rules:
-- Return up to 6 grants, ranked by fit to the user.
+- Return up to 6 grants, ranked by fitScore descending.
 - Only include items that look like actual grant/funding programs (not news, not generic landing pages).
 - "amount": short string like "Up to $500K" or "Unknown" if not found.
 - "deadline": short date string or "Rolling" or "Unknown".
 - "eligibility": 1-3 short bullet points pulled from the page.
-- "fitReason": one sentence explaining why this matches the user.
+- "fitScore": integer 0-100 measuring how well this grant fits the user. Score honestly:
+    * 85-100 = strong match on region, sector, stage, and funding size
+    * 65-84  = good match on most dimensions, minor gaps
+    * 40-64  = partial match, notable mismatches (wrong region OR wrong stage OR wrong sector)
+    * 0-39   = weak fit, only include if nothing better exists
+  Be strict — do not inflate. Most grants should land 50-80.
+- "fitReason": ONE short sentence (max 22 words) explaining the score, citing the user's specific inputs (e.g. "Matches your EU market and early-stage tech product, but funding cap is below your €50k goal").
 - "sourceUrl": exact URL from the candidate.
 - If nothing fits, return {"grants":[]}.`;
 

@@ -5,6 +5,7 @@ export interface GrantResult {
   deadline: string;
   region: string;
   eligibility: string[];
+  fitScore?: number;
   fitReason: string;
   sourceUrl: string;
 }
