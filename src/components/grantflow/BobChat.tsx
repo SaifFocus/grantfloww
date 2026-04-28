@@ -3,6 +3,7 @@ import { MessageCircle, X, Send, Sparkles, Hammer, RotateCcw } from "lucide-reac
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useLatestGeneratorInput } from "./generatorContext";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
