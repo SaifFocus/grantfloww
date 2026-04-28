@@ -9,6 +9,7 @@ import type { GeneratorInput, GeneratedPlan } from "./types";
 import { generatePlan } from "./generatePlan";
 import OutputSection from "./OutputSection";
 import Reveal from "./Reveal";
+import { setLatestGeneratorInput } from "./generatorContext";
 
 const businessTypes = ["Startup", "Small business", "Non-profit", "Creative project", "Tech product", "Local service", "E-commerce", "Other"];
 const stages = ["Idea only", "Researching", "Already started", "Need funding", "Ready to launch"];
