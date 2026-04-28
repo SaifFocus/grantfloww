@@ -5,6 +5,7 @@ import HowItWorks from "@/components/grantflow/HowItWorks";
 import Generator from "@/components/grantflow/Generator";
 import DashboardPreview from "@/components/grantflow/DashboardPreview";
 import Footer from "@/components/grantflow/Footer";
+import BobChat from "@/components/grantflow/BobChat";
 
 const Index = () => {
   return (
@@ -16,6 +17,7 @@ const Index = () => {
       <Generator />
       <DashboardPreview />
       <Footer />
+      <BobChat />
     </main>
   );
 };
