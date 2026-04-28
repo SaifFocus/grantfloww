@@ -17,6 +17,12 @@ const SOURCES = [
   { name: "UKRI / Innovate UK", domain: "ukri.org", region: "UK" },
 ];
 
+interface Filters {
+  region?: string;
+  grantType?: string;
+  fundingStage?: string;
+}
+
 interface UserInput {
   idea?: string;
   businessType?: string;
@@ -24,6 +30,7 @@ interface UserInput {
   fundingGoal?: string;
   stage?: string;
   needs?: string[];
+  filters?: Filters;
 }
 
 async function callAI(messages: unknown[], json = false): Promise<string> {
