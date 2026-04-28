@@ -213,8 +213,36 @@ const BobChat = () => {
                   }`}
                 >
                   {m.role === "assistant" ? (
-                    <div className="prose prose-sm max-w-none prose-p:my-1.5 prose-ul:my-1.5 prose-li:my-0.5 prose-strong:text-foreground">
-                      <ReactMarkdown>{m.content}</ReactMarkdown>
+                    <div className="prose prose-sm max-w-none prose-p:my-1.5 prose-ul:my-1.5 prose-li:my-0.5 prose-strong:text-foreground prose-a:text-primary prose-a:font-medium prose-a:no-underline hover:prose-a:underline">
+                      <ReactMarkdown
+                        components={{
+                          a: ({ href, children, ...props }) => {
+                            const isAnchor = href?.startsWith("#");
+                            return (
+                              <a
+                                href={href}
+                                {...props}
+                                onClick={(e) => {
+                                  if (!isAnchor || !href) return;
+                                  e.preventDefault();
+                                  const id = href.slice(1);
+                                  const el = document.getElementById(id);
+                                  if (el) {
+                                    setOpen(false);
+                                    setTimeout(() => {
+                                      el.scrollIntoView({ behavior: "smooth", block: "start" });
+                                    }, 200);
+                                  }
+                                }}
+                              >
+                                {children}
+                              </a>
+                            );
+                          },
+                        }}
+                      >
+                        {m.content}
+                      </ReactMarkdown>
                     </div>
                   ) : (
                     m.content
