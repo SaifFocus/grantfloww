@@ -51,11 +51,12 @@
     --gradient-accent: linear-gradient(135deg, hsl(var(--brand-blue)) 0%, hsl(var(--brand-purple)) 100%);
     --gradient-text: linear-gradient(135deg, hsl(230 25% 12%) 0%, hsl(262 50% 30%) 50%, hsl(330 60% 45%) 100%);
 
-    /* Glass */
-    --glass-bg: 0 0% 100% / 0.6;
-    --glass-border: 0 0% 100% / 0.6;
-    --glass-shadow: 0 20px 60px -20px hsl(262 50% 40% / 0.18), 0 8px 24px -12px hsl(330 50% 50% / 0.12);
-    --glass-shadow-lg: 0 30px 80px -20px hsl(262 60% 40% / 0.25), 0 12px 32px -12px hsl(330 60% 50% / 0.15);
+    /* Glass — macOS-style glossy */
+    --glass-bg: 0 0% 100% / 0.42;
+    --glass-border: 0 0% 100% / 0.55;
+    --glass-shadow: 0 20px 60px -20px hsl(262 50% 40% / 0.22), 0 8px 24px -12px hsl(330 50% 50% / 0.14), inset 0 1px 0 0 hsl(0 0% 100% / 0.7), inset 0 -1px 0 0 hsl(0 0% 100% / 0.18);
+    --glass-shadow-lg: 0 30px 80px -20px hsl(262 60% 40% / 0.28), 0 12px 32px -12px hsl(330 60% 50% / 0.18), inset 0 1px 0 0 hsl(0 0% 100% / 0.85), inset 0 -1px 0 0 hsl(0 0% 100% / 0.22);
+    --glass-sheen: linear-gradient(180deg, hsl(0 0% 100% / 0.55) 0%, hsl(0 0% 100% / 0.18) 22%, hsl(0 0% 100% / 0.04) 55%, hsl(0 0% 100% / 0.12) 100%);
 
     /* Sidebar (unused, kept for shadcn) */
     --sidebar-background: 0 0% 98%;
@@ -97,27 +98,54 @@
 }
 
 @layer components {
+  .glass,
+  .glass-strong,
+  .glass-subtle {
+    position: relative;
+    isolation: isolate;
+  }
+  .glass::before,
+  .glass-strong::before,
+  .glass-subtle::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--glass-sheen);
+    pointer-events: none;
+    z-index: 0;
+    mix-blend-mode: overlay;
+    opacity: 0.9;
+  }
+  .glass > *,
+  .glass-strong > *,
+  .glass-subtle > * {
+    position: relative;
+    z-index: 1;
+  }
+
   .glass {
     background: hsl(var(--glass-bg));
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
     border: 1px solid hsl(var(--glass-border));
     box-shadow: var(--glass-shadow);
   }
 
   .glass-strong {
-    background: hsl(0 0% 100% / 0.75);
-    backdrop-filter: blur(40px) saturate(200%);
-    -webkit-backdrop-filter: blur(40px) saturate(200%);
-    border: 1px solid hsl(0 0% 100% / 0.7);
+    background: hsl(0 0% 100% / 0.55);
+    backdrop-filter: blur(44px) saturate(200%);
+    -webkit-backdrop-filter: blur(44px) saturate(200%);
+    border: 1px solid hsl(0 0% 100% / 0.65);
     box-shadow: var(--glass-shadow-lg);
   }
 
   .glass-subtle {
-    background: hsl(0 0% 100% / 0.4);
-    backdrop-filter: blur(16px) saturate(150%);
-    -webkit-backdrop-filter: blur(16px) saturate(150%);
-    border: 1px solid hsl(0 0% 100% / 0.5);
+    background: hsl(0 0% 100% / 0.28);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid hsl(0 0% 100% / 0.45);
+    box-shadow: 0 6px 20px -10px hsl(262 40% 30% / 0.15), inset 0 1px 0 0 hsl(0 0% 100% / 0.6);
   }
 
   .gradient-text {
