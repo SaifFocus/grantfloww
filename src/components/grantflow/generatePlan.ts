@@ -101,14 +101,7 @@ export function generatePlan(input: GeneratorInput): GeneratedPlan {
       why: `Funding of ${fg} will cover initial setup, regulatory and legal preparation, branding, and the first months of operations.`,
       outcome: `Within 6 months: a validated MVP, first paying customers, and measurable proof of demand in ${m}.`,
     },
-    roadmap: [
-      { when: "Week 1", what: `Validate idea with 10 conversations in ${m}` },
-      { when: "Week 2", what: "Define core offer, pricing, and brand voice" },
-      { when: "Week 3", what: "Prepare legal documents and grant materials" },
-      { when: "Week 4", what: `Submit application targeting ${fg}` },
-      { when: "Month 2", what: "Launch MVP and onboard first users" },
-      { when: "Month 3", what: "Start sales, partnerships, and iterate" },
-    ],
+    roadmap,
     contracts: [
       "Supplier agreement",
       "Client agreement",
@@ -117,12 +110,6 @@ export function generatePlan(input: GeneratorInput): GeneratedPlan {
       "Terms & conditions",
       "Privacy policy",
     ],
-    milestones: [
-      { label: "Validate business idea", progress: stage === "Idea only" ? 20 : stage === "Researching" ? 45 : 70 },
-      { label: "Prepare funding application", progress: needs.includes("Grant application") ? 60 : 30 },
-      { label: "Build brand identity", progress: needs.includes("Marketing") ? 55 : 25 },
-      { label: "Contact partners", progress: stage === "Already started" ? 65 : 20 },
-      { label: "Submit first application", progress: stage === "Need funding" ? 80 : 35 },
-    ],
+    milestones,
   };
 }
