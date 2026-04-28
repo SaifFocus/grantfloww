@@ -7,12 +7,31 @@ interface Props {
   onApply: (g: GrantResult) => void;
 }
 
+const scoreStyle = (score: number) => {
+  if (score >= 85) return { label: "Excellent fit", ring: "ring-emerald-400/60", text: "text-emerald-700", bg: "from-emerald-500 to-teal-500" };
+  if (score >= 65) return { label: "Good fit", ring: "ring-primary/50", text: "text-primary", bg: "from-primary to-accent" };
+  if (score >= 40) return { label: "Partial fit", ring: "ring-amber-400/60", text: "text-amber-700", bg: "from-amber-500 to-orange-500" };
+  return { label: "Weak fit", ring: "ring-muted-foreground/30", text: "text-muted-foreground", bg: "from-muted-foreground to-muted-foreground" };
+};
+
 const GrantCard = ({ grant, onApply }: Props) => {
+  const score = typeof grant.fitScore === "number" ? Math.max(0, Math.min(100, Math.round(grant.fitScore))) : null;
+  const s = score !== null ? scoreStyle(score) : null;
   return (
     <div className="glass-subtle rounded-2xl p-5 lift flex flex-col gap-3">
-      <div>
-        <h4 className="font-serif text-xl leading-tight">{grant.name}</h4>
-        <p className="text-sm text-muted-foreground mt-1">{grant.funder}</p>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h4 className="font-serif text-xl leading-tight">{grant.name}</h4>
+          <p className="text-sm text-muted-foreground mt-1">{grant.funder}</p>
+        </div>
+        {score !== null && s && (
+          <div className="shrink-0 flex flex-col items-center" title={`${s.label} — ${score}/100`}>
+            <div className={`relative w-14 h-14 rounded-full bg-gradient-to-br ${s.bg} grid place-items-center shadow-sm ring-2 ${s.ring} ring-offset-2 ring-offset-white/60`}>
+              <span className="text-white font-bold text-lg leading-none">{score}</span>
+            </div>
+            <span className={`text-[10px] font-medium mt-1 ${s.text}`}>{s.label}</span>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-wrap gap-2 text-xs">
