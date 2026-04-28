@@ -16,17 +16,26 @@ const SUGGESTED = [
   "What contracts do I need?",
 ];
 
+const INITIAL_MESSAGES: Msg[] = [
+  {
+    role: "assistant",
+    content:
+      "Hey, I'm **Bob The Builder** 🛠️ — I help you understand GrantFlow AI and turn your idea into a fundable plan. Ask me anything about the app, grants, or your roadmap.",
+  },
+];
+
 const BobChat = () => {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState<Msg[]>([
-    {
-      role: "assistant",
-      content:
-        "Hey, I'm **Bob The Builder** 🛠️ — I help you understand GrantFlow AI and turn your idea into a fundable plan. Ask me anything about the app, grants, or your roadmap.",
-    },
-  ]);
+  const [messages, setMessages] = useState<Msg[]>(INITIAL_MESSAGES);
+
+  const resetChat = () => {
+    if (loading) return;
+    setMessages(INITIAL_MESSAGES);
+    setInput("");
+    toast.success("Started a new chat");
+  };
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
