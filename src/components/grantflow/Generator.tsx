@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Sparkles, Wand2, Building2, Globe, Coins, Layers, Briefcase, Megaphone, Calculator, FileSignature, Map, BarChart3, Check } from "lucide-react";
+import { Sparkles, Wand2, Building2, Globe, Coins, Layers, Briefcase, Megaphone, Calculator, FileSignature, Map, BarChart3, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 import type { GeneratorInput, GeneratedPlan } from "./types";
 import { generatePlan } from "./generatePlan";
 import OutputSection from "./OutputSection";
