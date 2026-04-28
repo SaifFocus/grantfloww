@@ -17,6 +17,12 @@ const SOURCES = [
   { name: "UKRI / Innovate UK", domain: "ukri.org", region: "UK" },
 ];
 
+interface Filters {
+  region?: string;
+  grantType?: string;
+  fundingStage?: string;
+}
+
 interface UserInput {
   idea?: string;
   businessType?: string;
@@ -24,6 +30,7 @@ interface UserInput {
   fundingGoal?: string;
   stage?: string;
   needs?: string[];
+  filters?: Filters;
 }
 
 async function callAI(messages: unknown[], json = false): Promise<string> {
@@ -102,6 +109,16 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
     const input: UserInput = await req.json();
+    const filters = input.filters ?? {};
+    const fRegion = filters.region && filters.region !== "Any" ? filters.region : "";
+    const fType = filters.grantType && filters.grantType !== "Any" ? filters.grantType : "";
+    const fStage = filters.fundingStage && filters.fundingStage !== "Any" ? filters.fundingStage : "";
+
+    // Filter sources by region
+    const activeSources = fRegion
+      ? SOURCES.filter((s) => s.region === fRegion || fRegion === "Global")
+      : SOURCES;
+    const sourcesToUse = activeSources.length ? activeSources : SOURCES;
 
     // 1) Ask AI for 3-4 concise search queries
     const queryPrompt = `User wants funding for this business:
@@ -112,7 +129,12 @@ Deno.serve(async (req) => {
 - Stage: ${input.stage ?? ""}
 - Needs: ${(input.needs ?? []).join(", ")}
 
-Return JSON: { "queries": ["q1","q2","q3"] } — 3 short search queries (5-9 words each) to find matching GRANTS or public funding programs. No years, no quotes inside, just keywords.`;
+User filters (must influence queries):
+- Region: ${fRegion || "any"}
+- Grant type: ${fType || "any"}
+- Funding stage: ${fStage || "any"}
+
+Return JSON: { "queries": ["q1","q2","q3"] } — 3 short search queries (5-9 words each) to find matching GRANTS or public funding programs that respect the filters above. No years, no quotes inside, just keywords.`;
     const qRaw = await callAI(
       [
         { role: "system", content: "You return only valid JSON." },
@@ -128,12 +150,16 @@ Return JSON: { "queries": ["q1","q2","q3"] } — 3 short search queries (5-9 wor
     }
     queries = queries.slice(0, 3).filter(Boolean);
 
+    // Append filter keywords to each query for better targeting
+    const filterSuffix = [fType, fStage].filter(Boolean).join(" ");
+    if (filterSuffix) queries = queries.map((q) => `${q} ${filterSuffix}`);
+
     // 2) For each (query x source), call Firecrawl search
     const seen = new Set<string>();
     const candidates: { title: string; url: string; description: string; source: string; region: string }[] = [];
 
     for (const q of queries) {
-      for (const src of SOURCES) {
+      for (const src of sourcesToUse) {
         const scoped = `${q} site:${src.domain}`;
         let results: any[] = [];
         try {
@@ -182,6 +208,11 @@ Return JSON: { "queries": ["q1","q2","q3"] } — 3 short search queries (5-9 wor
     // 4) Ask AI to extract+rank up to 6 grants
     const rankPrompt = `User profile:
 ${JSON.stringify(input)}
+
+Active filters (prefer grants matching these; drop clear mismatches):
+- Region: ${fRegion || "any"}
+- Grant type: ${fType || "any"}
+- Funding stage: ${fStage || "any"}
 
 Candidate grant pages (title, url, source, snippet, scraped content):
 ${scraped
