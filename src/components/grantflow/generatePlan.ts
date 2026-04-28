@@ -1,0 +1,68 @@
+import type { GeneratorInput, GeneratedPlan } from "./types";
+
+const titleCase = (s: string) =>
+  s.replace(/\b\w/g, (c) => c.toUpperCase());
+
+const deriveName = (idea: string, type: string) => {
+  const words = idea
+    .replace(/[^a-zA-Z\s]/g, "")
+    .split(/\s+/)
+    .filter((w) => w.length > 3 && !["want", "start", "from", "into", "with", "that", "this", "have", "need"].includes(w.toLowerCase()))
+    .slice(0, 2);
+  if (words.length === 0) return type ? `${titleCase(type)} Venture` : "NewVenture";
+  return titleCase(words.join("")) + (type === "Tech product" ? "Labs" : "Co");
+};
+
+export function generatePlan(input: GeneratorInput): GeneratedPlan {
+  const { idea, businessType, market, fundingGoal, needs, stage } = input;
+  const ideaShort = idea.trim().split(/\s+/).slice(0, 18).join(" ");
+  const m = market || "your target market";
+  const fg = fundingGoal || "your funding goal";
+  const bt = businessType || "venture";
+  const name = deriveName(idea, businessType);
+
+  return {
+    concept: {
+      name,
+      summary: `${name} is a ${bt.toLowerCase()} focused on ${ideaShort.toLowerCase() || "delivering meaningful value"}, designed to operate across ${m} with a lean, scalable model.`,
+      audience: `Early adopters and underserved customers in ${m} who currently lack a streamlined option.`,
+      revenue: businessType === "Non-profit"
+        ? "Grants, sponsorships, and impact-based funding."
+        : businessType === "E-commerce"
+          ? "Direct sales, subscriptions, and partnership revenue."
+          : "Service fees, recurring contracts, and tiered pricing.",
+      uvp: `A trusted, end-to-end experience for ${m} — combining local expertise with a modern, transparent process.`,
+    },
+    grant: {
+      title: `${name}: Building accessible ${bt.toLowerCase()} solutions for ${m}`,
+      problem: `Founders and customers in ${m} face fragmented options, language barriers, and unclear processes when pursuing ${ideaShort.toLowerCase() || "this opportunity"}.`,
+      solution: `${name} provides a structured, technology-enabled ${bt.toLowerCase()} that simplifies the journey and removes friction at every step.`,
+      impact: `Supports local economic activity, creates jobs, and strengthens cross-border collaboration in ${m}.`,
+      why: `Funding of ${fg} will cover initial setup, regulatory and legal preparation, branding, and the first months of operations.`,
+      outcome: `Within 6 months: a validated MVP, first paying customers, and measurable proof of demand in ${m}.`,
+    },
+    roadmap: [
+      { when: "Week 1", what: `Validate idea with 10 conversations in ${m}` },
+      { when: "Week 2", what: "Define core offer, pricing, and brand voice" },
+      { when: "Week 3", what: "Prepare legal documents and grant materials" },
+      { when: "Week 4", what: `Submit application targeting ${fg}` },
+      { when: "Month 2", what: "Launch MVP and onboard first users" },
+      { when: "Month 3", what: "Start sales, partnerships, and iterate" },
+    ],
+    contracts: [
+      "Supplier agreement",
+      "Client agreement",
+      "NDA (Non-disclosure agreement)",
+      "Partnership agreement",
+      "Terms & conditions",
+      "Privacy policy",
+    ],
+    milestones: [
+      { label: "Validate business idea", progress: stage === "Idea only" ? 20 : stage === "Researching" ? 45 : 70 },
+      { label: "Prepare funding application", progress: needs.includes("Grant application") ? 60 : 30 },
+      { label: "Build brand identity", progress: needs.includes("Marketing") ? 55 : 25 },
+      { label: "Contact partners", progress: stage === "Already started" ? 65 : 20 },
+      { label: "Submit first application", progress: stage === "Need funding" ? 80 : 35 },
+    ],
+  };
+}
