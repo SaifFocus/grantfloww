@@ -63,6 +63,11 @@ const OutputSection = ({ plan, userInput }: Props) => {
             <Field label="Expected outcome" value={plan.grant.outcome} />
           </TabsContent>
 
+          {/* Find Grants */}
+          <TabsContent value="grants" className="mt-0 animate-fade-in">
+            <GrantsTab userInput={userInput} />
+          </TabsContent>
+
           {/* Roadmap */}
           <TabsContent value="roadmap" className="mt-0 animate-fade-in">
             <div className="relative pl-8 md:pl-12">
