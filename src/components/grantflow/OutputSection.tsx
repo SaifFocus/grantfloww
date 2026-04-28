@@ -1,11 +1,12 @@
-import { Lightbulb, FileText, Map, ListChecks, Target, Check, AlertCircle } from "lucide-react";
+import { Lightbulb, FileText, Map, ListChecks, Target, Check, AlertCircle, Search } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import type { GeneratedPlan } from "./types";
+import type { GeneratedPlan, GeneratorInput } from "./types";
+import GrantsTab from "./GrantsTab";
 
-interface Props { plan: GeneratedPlan }
+interface Props { plan: GeneratedPlan; userInput: GeneratorInput }
 
-const OutputSection = ({ plan }: Props) => {
+const OutputSection = ({ plan, userInput }: Props) => {
   return (
     <div className="animate-fade-in-up">
       <div className="text-center mb-8">
@@ -24,6 +25,7 @@ const OutputSection = ({ plan }: Props) => {
             {[
               { v: "concept", icon: Lightbulb, label: "Concept" },
               { v: "grant", icon: FileText, label: "Grant Draft" },
+              { v: "grants", icon: Search, label: "Find Grants" },
               { v: "roadmap", icon: Map, label: "Roadmap" },
               { v: "contracts", icon: ListChecks, label: "Contracts" },
               { v: "milestones", icon: Target, label: "Milestones" },
@@ -59,6 +61,11 @@ const OutputSection = ({ plan }: Props) => {
               <Field label="Why funding is needed" value={plan.grant.why} />
             </div>
             <Field label="Expected outcome" value={plan.grant.outcome} />
+          </TabsContent>
+
+          {/* Find Grants */}
+          <TabsContent value="grants" className="mt-0 animate-fade-in">
+            <GrantsTab userInput={userInput} />
           </TabsContent>
 
           {/* Roadmap */}

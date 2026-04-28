@@ -306,7 +306,7 @@ const Generator = () => {
 
         {/* Output */}
         <div id="output" className="mt-12">
-          {plan && <OutputSection plan={plan} />}
+          {plan && <OutputSection plan={plan} userInput={form} />}
         </div>
       </div>
     </section>
