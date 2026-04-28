@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Search, Loader2, AlertCircle, Sparkles } from "lucide-react";
+import { Search, Loader2, AlertCircle, Sparkles, Filter, MapPin, Tag, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import GrantCard from "./GrantCard";
 import ApplicationWizard from "./ApplicationWizard";
@@ -11,10 +13,34 @@ interface Props {
   userInput: GeneratorInput;
 }
 
+const REGIONS = ["Any", "US", "EU", "UK", "Global"];
+const GRANT_TYPES = [
+  "Any",
+  "Research & innovation",
+  "Small business / SME",
+  "Non-profit / social",
+  "Creative & cultural",
+  "Tech / R&D",
+  "Sustainability / climate",
+  "Export / trade",
+];
+const STAGES = ["Any", "Idea", "Early-stage", "Growth", "Established"];
+
+interface Filters {
+  region: string;
+  grantType: string;
+  fundingStage: string;
+}
+
 const GrantsTab = ({ userInput }: Props) => {
   const [loading, setLoading] = useState(false);
   const [grants, setGrants] = useState<GrantResult[] | null>(null);
   const [active, setActive] = useState<GrantResult | null>(null);
+  const [filters, setFilters] = useState<Filters>({
+    region: "Any",
+    grantType: "Any",
+    fundingStage: "Any",
+  });
 
   const findGrants = async () => {
     setLoading(true);
@@ -27,7 +53,7 @@ const GrantsTab = ({ userInput }: Props) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify(userInput),
+        body: JSON.stringify({ ...userInput, filters }),
       });
       const data = await r.json().catch(() => ({}));
       if (!r.ok) {
@@ -49,25 +75,75 @@ const GrantsTab = ({ userInput }: Props) => {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      <div className="glass-subtle rounded-2xl p-5 flex flex-col md:flex-row md:items-center gap-4 justify-between">
-        <div>
-          <h4 className="font-serif text-xl">Find grants matching your idea</h4>
-          <p className="text-sm text-muted-foreground mt-1">
-            We search free public portals (Grants.gov, EU, gov.uk, UKRI) and rank with AI.
-          </p>
+      <div className="glass-subtle rounded-2xl p-5 space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center gap-4 justify-between">
+          <div>
+            <h4 className="font-serif text-xl">Find grants matching your idea</h4>
+            <p className="text-sm text-muted-foreground mt-1">
+              We search free public portals (Grants.gov, EU, gov.uk, UKRI) and rank with AI.
+            </p>
+          </div>
+          <Button
+            onClick={findGrants}
+            disabled={loading}
+            size="lg"
+            className="rounded-2xl bg-gradient-primary text-white border-0 hover:opacity-95 shrink-0"
+          >
+            {loading ? (
+              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Searching…</>
+            ) : (
+              <><Search className="w-4 h-4 mr-2" /> Find matching grants</>
+            )}
+          </Button>
         </div>
-        <Button
-          onClick={findGrants}
-          disabled={loading}
-          size="lg"
-          className="rounded-2xl bg-gradient-primary text-white border-0 hover:opacity-95 shrink-0"
-        >
-          {loading ? (
-            <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Searching…</>
-          ) : (
-            <><Search className="w-4 h-4 mr-2" /> Find matching grants</>
-          )}
-        </Button>
+
+        {/* Filters */}
+        <div className="border-t border-white/60 pt-4">
+          <div className="flex items-center gap-2 mb-3 text-xs uppercase tracking-wider text-muted-foreground">
+            <Filter className="w-3 h-3" /> Filters
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs flex items-center gap-1.5">
+                <MapPin className="w-3 h-3 text-primary" /> Country / region
+              </Label>
+              <Select value={filters.region} onValueChange={(v) => setFilters((f) => ({ ...f, region: v }))}>
+                <SelectTrigger className="glass-subtle border-white/60 rounded-xl h-10 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
+                  {REGIONS.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs flex items-center gap-1.5">
+                <Tag className="w-3 h-3 text-primary" /> Grant type
+              </Label>
+              <Select value={filters.grantType} onValueChange={(v) => setFilters((f) => ({ ...f, grantType: v }))}>
+                <SelectTrigger className="glass-subtle border-white/60 rounded-xl h-10 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
+                  {GRANT_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs flex items-center gap-1.5">
+                <Layers className="w-3 h-3 text-primary" /> Funding stage
+              </Label>
+              <Select value={filters.fundingStage} onValueChange={(v) => setFilters((f) => ({ ...f, fundingStage: v }))}>
+                <SelectTrigger className="glass-subtle border-white/60 rounded-xl h-10 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
+                  {STAGES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
       </div>
 
       {loading && (
@@ -91,7 +167,7 @@ const GrantsTab = ({ userInput }: Props) => {
           <AlertCircle className="w-8 h-8 text-amber-500 mx-auto mb-2" />
           <p className="text-foreground font-medium">No matching grants found.</p>
           <p className="text-sm text-muted-foreground mt-1">
-            Try broadening your idea or market in the form above and search again.
+            Try loosening your filters or broadening your idea, then search again.
           </p>
         </div>
       )}
