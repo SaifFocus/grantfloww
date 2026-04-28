@@ -57,6 +57,7 @@ const Generator = () => {
     clearInterval(interval);
     const result = generatePlan(form);
     setPlan(result);
+    setLatestGeneratorInput(form);
     setLoading(false);
     setTimeout(() => {
       document.getElementById("output")?.scrollIntoView({ behavior: "smooth", block: "start" });
