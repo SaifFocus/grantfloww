@@ -58,9 +58,40 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { messages } = await req.json();
+    const { messages, userContext } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    let contextBlock = "";
+    if (userContext && typeof userContext === "object") {
+      const {
+        idea,
+        businessType,
+        market,
+        fundingGoal,
+        stage,
+        needs,
+      } = userContext as Record<string, unknown>;
+      const needsArr = Array.isArray(needs) ? (needs as string[]) : [];
+      const hasAny =
+        (idea && String(idea).trim()) ||
+        businessType ||
+        market ||
+        fundingGoal ||
+        stage ||
+        needsArr.length;
+      if (hasAny) {
+        contextBlock = `\n\nUSER'S CURRENT GENERATOR INPUTS (use these to personalize every answer; refer to them naturally, e.g. "for your ${businessType || "business"} in ${market || "your market"}"):
+- Idea: ${idea ? String(idea).slice(0, 800) : "(not provided)"}
+- Business type: ${businessType || "(not provided)"}
+- Market / country: ${market || "(not provided)"}
+- Funding goal: ${fundingGoal || "(not provided)"}
+- Current stage: ${stage || "(not provided)"}
+- Needs help with: ${needsArr.length ? needsArr.join(", ") : "(not provided)"}
+
+When the user asks vague questions ("how do I start?", "what grant should I apply for?"), tailor the answer specifically to the inputs above. Do not invent new details about their business — only use what's listed. If something is missing and matters, ask one short clarifying question.`;
+      }
+    }
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
@@ -73,7 +104,7 @@ Deno.serve(async (req) => {
         body: JSON.stringify({
           model: "google/gemini-3-flash-preview",
           messages: [
-            { role: "system", content: SITE_KNOWLEDGE },
+            { role: "system", content: SITE_KNOWLEDGE + contextBlock },
             ...(messages ?? []),
           ],
           stream: true,
