@@ -31,7 +31,7 @@ const Generator = () => {
     market: "",
     fundingGoal: "",
     needs: [],
-    stage: "",
+    stage: "Idea only",
   });
   const [loading, setLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState(0);
