@@ -38,12 +38,55 @@ const Generator = () => {
   const [loading, setLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState(0);
   const [plan, setPlan] = useState<GeneratedPlan | null>(null);
+  const [expanding, setExpanding] = useState(false);
 
   const toggleNeed = (id: string) => {
     setForm((f) => ({
       ...f,
       needs: f.needs.includes(id) ? f.needs.filter((n) => n !== id) : [...f.needs, id],
     }));
+  };
+
+  const handleExpandIdea = async () => {
+    if (!form.idea.trim() || expanding) return;
+    setExpanding(true);
+    try {
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/expand-idea`;
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          idea: form.idea,
+          businessType: form.businessType,
+          market: form.market,
+          fundingGoal: form.fundingGoal,
+          stage: form.stage,
+          needs: form.needs,
+        }),
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        if (resp.status === 429) toast.error("Too many requests — try again in a moment.");
+        else if (resp.status === 402) toast.error("AI credits exhausted. Add funds to continue.");
+        else toast.error(data?.error || "Couldn't expand the idea right now.");
+        return;
+      }
+      const expanded = (data?.expanded || "").trim();
+      if (!expanded) {
+        toast.error("Got an empty response — try again.");
+        return;
+      }
+      setForm((f) => ({ ...f, idea: expanded }));
+      toast.success("Idea expanded with AI ✨");
+    } catch (e) {
+      console.error(e);
+      toast.error("Network error — please try again.");
+    } finally {
+      setExpanding(false);
+    }
   };
 
   const handleGenerate = async () => {
