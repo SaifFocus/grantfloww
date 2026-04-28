@@ -30,6 +30,7 @@ const BobChat = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Msg[]>(INITIAL_MESSAGES);
+  const generatorInput = useLatestGeneratorInput();
 
   const resetChat = () => {
     if (loading) return;
