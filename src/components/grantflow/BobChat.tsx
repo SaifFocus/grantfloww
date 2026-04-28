@@ -77,6 +77,16 @@ const BobChat = () => {
         },
         body: JSON.stringify({
           messages: next.map((m) => ({ role: m.role, content: m.content })),
+          userContext: generatorInput
+            ? {
+                idea: generatorInput.idea,
+                businessType: generatorInput.businessType,
+                market: generatorInput.market,
+                fundingGoal: generatorInput.fundingGoal,
+                stage: generatorInput.stage,
+                needs: generatorInput.needs,
+              }
+            : null,
         }),
       });
 
