@@ -3,6 +3,7 @@ import { MessageCircle, X, Send, Sparkles, Hammer, RotateCcw } from "lucide-reac
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useLatestGeneratorInput } from "./generatorContext";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -29,6 +30,7 @@ const BobChat = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Msg[]>(INITIAL_MESSAGES);
+  const generatorInput = useLatestGeneratorInput();
 
   const resetChat = () => {
     if (loading) return;
@@ -75,6 +77,16 @@ const BobChat = () => {
         },
         body: JSON.stringify({
           messages: next.map((m) => ({ role: m.role, content: m.content })),
+          userContext: generatorInput
+            ? {
+                idea: generatorInput.idea,
+                businessType: generatorInput.businessType,
+                market: generatorInput.market,
+                fundingGoal: generatorInput.fundingGoal,
+                stage: generatorInput.stage,
+                needs: generatorInput.needs,
+              }
+            : null,
         }),
       });
 
@@ -160,6 +172,12 @@ const BobChat = () => {
               <div className="text-xs text-muted-foreground flex items-center gap-1">
                 <Sparkles className="w-3 h-3 text-primary" /> GrantFlow AI assistant
               </div>
+              {generatorInput && (
+                <div className="mt-1 inline-flex items-center gap-1 text-[10px] font-medium text-primary bg-primary/10 rounded-full px-2 py-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                  Personalized to your idea
+                </div>
+              )}
             </div>
             <button
               onClick={resetChat}
