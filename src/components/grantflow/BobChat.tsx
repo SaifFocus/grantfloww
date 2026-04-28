@@ -162,6 +162,16 @@ const BobChat = () => {
               </div>
             </div>
             <button
+              onClick={resetChat}
+              disabled={loading || messages.length <= 1}
+              className="h-8 px-2.5 rounded-full hover:bg-white/60 flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              aria-label="Start new chat"
+              title="Start new chat"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">New chat</span>
+            </button>
+            <button
               onClick={() => setOpen(false)}
               className="w-8 h-8 rounded-full hover:bg-white/60 flex items-center justify-center text-muted-foreground"
               aria-label="Close chat"
