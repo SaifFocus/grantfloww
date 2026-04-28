@@ -209,6 +209,11 @@ Return JSON: { "queries": ["q1","q2","q3"] } — 3 short search queries (5-9 wor
     const rankPrompt = `User profile:
 ${JSON.stringify(input)}
 
+Active filters (prefer grants matching these; drop clear mismatches):
+- Region: ${fRegion || "any"}
+- Grant type: ${fType || "any"}
+- Funding stage: ${fStage || "any"}
+
 Candidate grant pages (title, url, source, snippet, scraped content):
 ${scraped
   .map(
