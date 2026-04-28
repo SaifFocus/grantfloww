@@ -1,92 +1,82 @@
 ## Goal
 
-Add a **"Find Grants"** experience to GrantFlow AI that:
-1. **Discovers real grants** matching the user's idea, market, business type, and funding goal — pulled from live sources, not a hard-coded list.
-2. **Recommends a shortlist** with name, funder, amount, deadline, eligibility fit, and a "why this matches you" line.
-3. **Walks the user through writing the application** for any selected grant, step-by-step, AI-guided, with editable answers and a final exportable draft.
+Build the **Find Grants → Guided Application** experience using:
+- **Firecrawl** (connector) to pull real, current grant listings from a curated set of **free, public** grant portals.
+- **Lovable AI** (no extra key) to rank/filter results against the user's idea and to power the 5-step application wizard.
 
-## What to integrate (and what's already in place)
+No Perplexity, no paid search APIs, no per-user API keys.
 
-You already have:
-- **Lovable Cloud** (Supabase) — used for edge functions
-- **Lovable AI Gateway** (`LOVABLE_API_KEY`) — used for Bob and Expand-with-AI
+## Free sources we'll target
 
-To make grant *discovery* return real, current results (not made-up names), one of these needs to be added:
+A small, reliable starter set — all free, no login required:
 
-| Option | What it does | Cost / setup |
-|---|---|---|
-| **Perplexity connector** (recommended) | One call returns AI-summarized grant matches with real source URLs and citations. Best fit because grants are a "live web research" task. | Connector — you'd just authorize it. Has its own usage cost. |
-| **Firecrawl connector** | Lets us scrape specific grant portals (EU Funding & Tenders, Vinnova, gov.uk, etc.). More work, more brittle. | Connector — authorize + write scraping logic per source. |
-| **AI-only (no integration)** | Use the existing Lovable AI to *generate* grant suggestions from its training data. Fast, free-ish, but may hallucinate names/amounts and won't know 2026 deadlines. | None. |
+1. **Grants.gov** — `https://www.grants.gov/search-grants` (US federal grants)
+2. **EU Funding & Tenders Portal** — `https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-search` (EU grants)
+3. **UK gov.uk grants** — `https://www.gov.uk/search/grants` (UK grants)
+4. **Innovate UK / UKRI** — `https://www.ukri.org/opportunity/` (UK innovation funding)
 
-**Recommendation:** add the **Perplexity** connector. It's the cleanest fit — grant discovery is exactly what its grounded-search model is built for, and we get real source links to show under each suggestion. Application *writing* keeps using Lovable AI (no extra cost, no hallucination risk since we're writing, not researching).
+We start with these four. Easy to add more later by editing one config array.
 
-If you'd rather not add a connector, we can ship the same UI powered by Lovable AI alone and clearly label results as "AI-suggested — verify before applying." Just say the word.
-
-## UX flow
+## How it works
 
 ```text
-Generator (existing)
-   │ generates plan + saves user inputs
-   ▼
-Output tabs (existing)
-   │ NEW tab: "Grants"  ← appears between Grant Draft and Roadmap
-   ▼
-Grants tab
-   ├─ "Find matching grants" button
-   │     ↓ calls find-grants edge function (Perplexity)
-   ├─ Loading skeleton (4 cards)
-   └─ Result cards:
-        ┌─────────────────────────────────────┐
-        │ EU Horizon Europe — EIC Accelerator │
-        │ Up to €2.5M · Deadline: 12 Mar 2026 │
-        │ "Why this fits: cross-border SME…"  │
-        │ [source link]   [Write application →]│
-        └─────────────────────────────────────┘
-
-Click "Write application →"
-   ▼
-Guided Application modal (full-screen on mobile)
-   ├─ Stepper: 1 Eligibility · 2 Project · 3 Impact · 4 Budget · 5 Review
-   ├─ Each step:
-   │     • Question + helper text from AI
-   │     • Pre-filled draft answer (AI uses user's idea + grant context)
-   │     • Editable textarea
-   │     • "Improve with AI" button per field
-   └─ Final step:
-        • Compiled application preview
-        • "Copy to clipboard" + "Download as .md"
-        • Toast: "Saved locally — come back any time"
+User clicks "Find matching grants" in new Grants tab
+        │
+        ▼
+Edge fn: find-grants
+   1. Take user inputs (idea, market, businessType, fundingGoal, stage, needs)
+   2. Lovable AI → produce 3–5 short search queries + region hints
+   3. For each (source, query):
+        Firecrawl /v2/search  (scoped via `site:` to the free portal)
+        → returns titles, URLs, snippets
+   4. Deduplicate + cap to ~20 candidates
+   5. For top ~8 candidates: Firecrawl /v2/scrape (markdown, onlyMainContent)
+   6. Lovable AI → rank + extract structured fields per grant:
+        { name, funder, amount, deadline, region, eligibility[], fitReason, sourceUrl }
+   7. Return top 6 as JSON
+        │
+        ▼
+GrantsTab renders cards (skeleton while loading)
+        │
+        ▼
+"Write application →" opens ApplicationWizard
+        │
+        ▼
+5-step wizard (Eligibility · Project · Impact · Budget · Review)
+   - Each step: AI-drafted answer, editable, "Improve with AI" per field
+   - Edge fn: draft-application-step (Lovable AI only, no Firecrawl)
+   - Final step: preview + Copy + Download .md
+   - Progress saved to localStorage (no auth, no DB)
 ```
 
-## Technical breakdown
+## What gets built
 
-**New edge functions**
-- `find-grants` — takes `{ idea, businessType, market, fundingGoal, stage, needs }`, calls Perplexity (`sonar-pro`) with a strict JSON schema, returns `{ grants: [{ name, funder, amount, deadline, region, fitReason, sourceUrl, eligibility[] }] }`.
-- `draft-application-step` — takes `{ grant, userInput, step, previousAnswers }`, calls Lovable AI to produce/refine one section at a time. Streams response.
+**Connector**
+- Link **Firecrawl** connector (one click, you'll be prompted).
 
-**New components**
-- `src/components/grantflow/GrantsTab.tsx` — tab body, list of grant cards, loading state.
-- `src/components/grantflow/GrantCard.tsx` — single result card.
-- `src/components/grantflow/ApplicationWizard.tsx` — modal/dialog with stepper, per-field "Improve with AI", final review + export.
-- `src/components/grantflow/applicationSteps.ts` — the 5 step definitions (questions, hints, target word counts).
+**Edge functions** (`supabase/functions/`)
+- `find-grants/index.ts` — orchestrates AI query gen → Firecrawl search → Firecrawl scrape → AI ranking. Returns `{ grants: [...] }`.
+- `draft-application-step/index.ts` — Lovable AI, takes `{ grant, userInput, step, previousAnswers }`, returns drafted/refined section.
+
+**Frontend** (`src/components/grantflow/`)
+- `GrantsTab.tsx` — tab body, "Find matching grants" CTA, loading skeletons, empty state.
+- `GrantCard.tsx` — one result card (name, funder, amount, deadline, fit reason, source link, "Write application").
+- `ApplicationWizard.tsx` — full-screen dialog with 5-step stepper, per-field AI assist, final review + export to clipboard / `.md`.
+- `applicationSteps.ts` — the 5 step definitions (questions, hints, target word counts).
+- `grantSources.ts` — the free-portal config (name, base URL, region tags).
 
 **Wiring**
 - Add `"grants"` tab to `OutputSection.tsx` between "grant" and "roadmap".
-- Persist found grants + draft answers in `localStorage` keyed by user input hash, so refresh doesn't wipe progress (still no auth, still no DB).
-- Bob already knows the user's inputs — he can also answer "what should I write for impact?" naturally.
+- Persist `{ grants, draftAnswers }` in `localStorage`, keyed by hash of user inputs, so refresh doesn't wipe progress.
 
-**Error handling**
-- 429 / 402 from Perplexity → toast "Search busy, try again" / "Credits exhausted."
-- Empty results → friendly empty state with a "Loosen filters" suggestion.
-- All AI prompts kept server-side per existing pattern.
+## Honest limitations
 
-## What I need from you
+- Firecrawl free tier has limits — heavy use will eventually hit 402; we'll surface a clear message and the `LOVABLE50` coupon hint (since the connection is managed).
+- Free portals don't always expose machine-readable deadlines; AI extraction is best-effort, so each card shows the **source link** for the user to verify before applying.
+- Coverage is only as wide as the source list — easy to grow later.
 
-Pick one:
+## What you need to do
 
-1. **Add Perplexity** (recommended) — I'll trigger the connector flow, then build everything above.
-2. **Skip the connector, AI-only** — same UX, results labeled as AI-suggested; you can add Perplexity later.
-3. **Use Firecrawl** to scrape specific grant sites — slower to build, narrower coverage; only worth it if you have specific portals in mind.
-
-Tell me which option (and any specific grant portals you care about if option 3) and I'll build it.
+1. Approve this plan.
+2. When prompted, authorize the **Firecrawl** connector.
+3. That's it — no API keys to paste, no accounts to create.
