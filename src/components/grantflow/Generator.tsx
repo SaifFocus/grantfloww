@@ -202,14 +202,34 @@ const Generator = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium flex items-center gap-2">
-                    <Coins className="w-3.5 h-3.5 text-primary" /> Funding goal
-                  </Label>
+                  <div className="flex items-center justify-between gap-2">
+                    <Label className="text-sm font-medium flex items-center gap-2">
+                      <Coins className="w-3.5 h-3.5 text-primary" /> Funding goal
+                    </Label>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setForm((f) => ({
+                          ...f,
+                          fundingGoal: f.fundingGoal === "N/A" ? "" : "N/A",
+                        }))
+                      }
+                      className={`text-[10px] font-medium px-2 py-0.5 rounded-full border transition-all ${
+                        form.fundingGoal === "N/A"
+                          ? "bg-gradient-primary text-white border-transparent shadow-sm"
+                          : "glass-subtle border-white/60 text-muted-foreground hover:text-foreground hover:bg-white/70"
+                      }`}
+                      title="Set to N/A — open to any amount"
+                    >
+                      N/A
+                    </button>
+                  </div>
                   <Input
                     value={form.fundingGoal}
                     onChange={(e) => setForm({ ...form, fundingGoal: e.target.value })}
-                    placeholder="€10,000"
-                    className="glass-subtle border-white/60 rounded-2xl h-11"
+                    placeholder={form.fundingGoal === "N/A" ? "Open to any amount" : "€10,000 or N/A"}
+                    disabled={form.fundingGoal === "N/A"}
+                    className="glass-subtle border-white/60 rounded-2xl h-11 disabled:opacity-70 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
