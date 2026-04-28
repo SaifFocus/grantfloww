@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Sparkles, Wand2, Building2, Globe, Coins, Layers, Briefcase, Megaphone, Calculator, FileSignature, Map, BarChart3, Check } from "lucide-react";
+import { Sparkles, Wand2, Building2, Globe, Coins, Layers, Briefcase, Megaphone, Calculator, FileSignature, Map, BarChart3, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 import type { GeneratorInput, GeneratedPlan } from "./types";
 import { generatePlan } from "./generatePlan";
 import OutputSection from "./OutputSection";
@@ -37,12 +38,55 @@ const Generator = () => {
   const [loading, setLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState(0);
   const [plan, setPlan] = useState<GeneratedPlan | null>(null);
+  const [expanding, setExpanding] = useState(false);
 
   const toggleNeed = (id: string) => {
     setForm((f) => ({
       ...f,
       needs: f.needs.includes(id) ? f.needs.filter((n) => n !== id) : [...f.needs, id],
     }));
+  };
+
+  const handleExpandIdea = async () => {
+    if (!form.idea.trim() || expanding) return;
+    setExpanding(true);
+    try {
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/expand-idea`;
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          idea: form.idea,
+          businessType: form.businessType,
+          market: form.market,
+          fundingGoal: form.fundingGoal,
+          stage: form.stage,
+          needs: form.needs,
+        }),
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        if (resp.status === 429) toast.error("Too many requests — try again in a moment.");
+        else if (resp.status === 402) toast.error("AI credits exhausted. Add funds to continue.");
+        else toast.error(data?.error || "Couldn't expand the idea right now.");
+        return;
+      }
+      const expanded = (data?.expanded || "").trim();
+      if (!expanded) {
+        toast.error("Got an empty response — try again.");
+        return;
+      }
+      setForm((f) => ({ ...f, idea: expanded }));
+      toast.success("Idea expanded with AI ✨");
+    } catch (e) {
+      console.error(e);
+      toast.error("Network error — please try again.");
+    } finally {
+      setExpanding(false);
+    }
   };
 
   const handleGenerate = async () => {
@@ -83,15 +127,50 @@ const Generator = () => {
             <div className="relative space-y-6">
               {/* Idea */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-primary" /> Your business idea
-                </Label>
-                <Textarea
-                  value={form.idea}
-                  onChange={(e) => setForm({ ...form, idea: e.target.value })}
-                  placeholder="Example: I want to start a car export business from Sweden to Finland…"
-                  className="min-h-[120px] glass-subtle border-white/60 rounded-2xl resize-none text-base"
-                />
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <Label className="text-sm font-medium flex items-center gap-2">
+                    <Sparkles className="w-3.5 h-3.5 text-primary" /> Your business idea
+                  </Label>
+                  <button
+                    type="button"
+                    onClick={handleExpandIdea}
+                    disabled={!form.idea.trim() || expanding || loading}
+                    className="group inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full glass-subtle border border-white/60 hover:bg-white/70 transition-all text-foreground disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                    title={form.idea.trim() ? "Expand your rough idea with AI" : "Write a short idea first"}
+                  >
+                    {expanding ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                        <span>Expanding…</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-3.5 h-3.5 text-primary group-hover:scale-110 transition-transform" />
+                        <span>Expand with AI</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                <div className="relative">
+                  <Textarea
+                    value={form.idea}
+                    onChange={(e) => setForm({ ...form, idea: e.target.value })}
+                    placeholder="Example: I want to start a car export business from Sweden to Finland…"
+                    className="min-h-[120px] glass-subtle border-white/60 rounded-2xl resize-none text-base"
+                    disabled={expanding}
+                  />
+                  {expanding && (
+                    <div className="absolute inset-0 rounded-2xl bg-white/40 backdrop-blur-sm flex items-center justify-center pointer-events-none">
+                      <div className="inline-flex items-center gap-2 text-sm text-foreground glass-subtle rounded-full px-4 py-2 border border-white/60">
+                        <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                        Expanding your idea…
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Tip: write 1–2 lines, then click <span className="font-medium text-foreground">Expand with AI</span> to flesh it out.
+                </p>
               </div>
 
               {/* Grid: type, market, funding */}
