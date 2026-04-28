@@ -172,6 +172,12 @@ const BobChat = () => {
               <div className="text-xs text-muted-foreground flex items-center gap-1">
                 <Sparkles className="w-3 h-3 text-primary" /> GrantFlow AI assistant
               </div>
+              {generatorInput && (
+                <div className="mt-1 inline-flex items-center gap-1 text-[10px] font-medium text-primary bg-primary/10 rounded-full px-2 py-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                  Personalized to your idea
+                </div>
+              )}
             </div>
             <button
               onClick={resetChat}
