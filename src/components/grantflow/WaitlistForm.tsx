@@ -1,18 +1,11 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { toast } from "sonner";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-
-const emailSchema = z
-  .string()
-  .trim()
-  .toLowerCase()
-  .min(3, "Please enter your email")
-  .max(255, "Email too long")
-  .email("Please enter a valid email");
 
 interface WaitlistFormProps {
   source?: "page" | "popup";
@@ -21,9 +14,18 @@ interface WaitlistFormProps {
 }
 
 const WaitlistForm = ({ source = "page", onSuccess, className }: WaitlistFormProps) => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+
+  const emailSchema = z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(3, t("waitlist.invalidEmail"))
+    .max(255, t("waitlist.invalidEmail"))
+    .email(t("waitlist.invalidEmail"));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,16 +40,15 @@ const WaitlistForm = ({ source = "page", onSuccess, className }: WaitlistFormPro
       .insert({ email: parsed.data, source });
 
     if (error) {
-      // Unique violation = already on the list — treat as success
       if (error.code === "23505") {
-        toast.success("You're already on the list — see you at launch!");
+        toast.success(t("waitlist.alreadyToast"));
         setDone(true);
         onSuccess?.();
       } else {
-        toast.error("Something went wrong. Please try again.");
+        toast.error(t("waitlist.errorToast"));
       }
     } else {
-      toast.success("You're on the waitlist! We'll email you at launch.");
+      toast.success(t("waitlist.successToast"));
       setDone(true);
       onSuccess?.();
     }
@@ -57,7 +58,7 @@ const WaitlistForm = ({ source = "page", onSuccess, className }: WaitlistFormPro
   if (done) {
     return (
       <div className={`glass-subtle rounded-full px-5 py-3 text-sm text-foreground/80 text-center ${className ?? ""}`}>
-        Thanks! We'll be in touch when we launch.
+        {t("waitlist.thanks")}
       </div>
     );
   }
@@ -67,7 +68,7 @@ const WaitlistForm = ({ source = "page", onSuccess, className }: WaitlistFormPro
       <Input
         type="email"
         required
-        placeholder="you@email.com"
+        placeholder={t("waitlist.emailPlaceholder")}
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         disabled={loading}
@@ -83,8 +84,8 @@ const WaitlistForm = ({ source = "page", onSuccess, className }: WaitlistFormPro
       >
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
           <>
-            Join waitlist
-            <ArrowRight className="w-4 h-4 ml-1" />
+            {t("waitlist.submit")}
+            <ArrowRight className="w-4 h-4 ml-1 rtl:rotate-180" />
           </>
         )}
       </Button>
