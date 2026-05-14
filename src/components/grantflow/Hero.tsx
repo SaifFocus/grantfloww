@@ -1,6 +1,7 @@
 import { ArrowRight, FileText, Map, ListChecks, Lightbulb, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Blobs from "./Blobs";
+import GlassShapes from "./GlassShapes";
 
 const Hero = () => {
   const scrollTo = (id: string) => {
@@ -10,6 +11,7 @@ const Hero = () => {
   return (
     <section id="top" className="relative pt-36 pb-24 md:pt-44 md:pb-32 overflow-hidden">
       <Blobs />
+      <GlassShapes variant="hero" />
       <div className="relative z-10 max-w-6xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass-subtle text-xs text-muted-foreground mb-6 animate-fade-in">
