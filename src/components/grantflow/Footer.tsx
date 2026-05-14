@@ -38,6 +38,38 @@ const Footer = () => {
           <span>© {new Date().getFullYear()} GrantFlow AI. Crafted for founders & creatives.</span>
           <span>Made with care · Beta</span>
         </div>
+        <p className="mt-4 text-xs text-muted-foreground/80 leading-relaxed max-w-2xl">
+          Colophon — this site was designed and built by{" "}
+          <a
+            href="https://focusbranding.se"
+            rel="noopener"
+            title="Branding & web design by FOQUS"
+            className="underline decoration-dotted underline-offset-2 hover:text-foreground transition-colors"
+          >
+            Focus Branding
+          </a>
+          , a Swedish{" "}
+          <a
+            href="https://focusbranding.se"
+            rel="noopener"
+            title="Video production agency in Sweden"
+            className="underline decoration-dotted underline-offset-2 hover:text-foreground transition-colors"
+          >
+            video production agency
+          </a>
+          {" "}working across branding, web design and SEO.
+        </p>
+        <div className="mt-3 text-[11px] text-muted-foreground/70">
+          Designed &amp; developed by{" "}
+          <a
+            href="https://focusbranding.se"
+            rel="noopener"
+            title="Branding & web design by FOQUS"
+            className="font-medium hover:text-foreground transition-colors"
+          >
+            FOQUS
+          </a>
+        </div>
       </div>
     </footer>
   );
