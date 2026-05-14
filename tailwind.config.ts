@@ -115,6 +115,7 @@ export default {
         "blob-float": "blob-float 18s ease-in-out infinite",
         "shimmer": "shimmer 2.5s linear infinite",
         "gradient-shift": "gradient-shift 8s ease infinite",
+        "glass-float": "glass-float 16s ease-in-out infinite",
       },
     },
   },
