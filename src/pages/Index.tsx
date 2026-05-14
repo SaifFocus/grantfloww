@@ -7,6 +7,7 @@ import DashboardPreview from "@/components/grantflow/DashboardPreview";
 import Footer from "@/components/grantflow/Footer";
 import BobChat from "@/components/grantflow/BobChat";
 import GlassShapes from "@/components/grantflow/GlassShapes";
+import WaitlistPopup from "@/components/grantflow/WaitlistPopup";
 
 const Bridge = ({ delay = "0s" }: { delay?: string }) => (
   <div className="relative h-24 md:h-32 -my-12 md:-my-16 overflow-visible">
@@ -30,6 +31,7 @@ const Index = () => {
       <DashboardPreview />
       <Footer />
       <BobChat />
+      <WaitlistPopup />
     </main>
   );
 };
