@@ -1,9 +1,11 @@
 import { ArrowRight, FileText, Map, ListChecks, Lightbulb, Sparkles } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import Blobs from "./Blobs";
 import GlassShapes from "./GlassShapes";
 
 const Hero = () => {
+  const { t } = useTranslation();
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
@@ -16,16 +18,15 @@ const Hero = () => {
         <div className="text-center max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass-subtle text-xs text-muted-foreground mb-6 animate-fade-in">
             <span className="w-1.5 h-1.5 rounded-full bg-gradient-primary" />
-            AI co-pilot for founders & creatives
+            {t("hero.badge")}
           </div>
           <h1 className="font-serif text-5xl md:text-7xl leading-[1.05] text-balance mb-6 animate-fade-in-up">
-            Turn your idea into a
+            {t("hero.title1")}
             <br />
-            <span className="gradient-text-brand italic">fundable business.</span>
+            <span className="gradient-text-brand italic">{t("hero.title2")}</span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 text-pretty animate-fade-in-up" style={{ animationDelay: "0.15s" }}>
-            GrantFlow AI helps you structure your idea, prepare grant applications, map your business journey,
-            and generate the next steps to launch.
+            {t("hero.subtitle")}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
             <Button
@@ -33,8 +34,8 @@ const Hero = () => {
               size="lg"
               className="rounded-full bg-gradient-primary text-white border-0 hover:opacity-95 px-7 h-12 shadow-lg shadow-primary/20 group"
             >
-              Start building your plan
-              <ArrowRight className="w-4 h-4 ml-1.5 group-hover:translate-x-0.5 transition-transform" />
+              {t("hero.ctaPrimary")}
+              <ArrowRight className="w-4 h-4 ml-1.5 group-hover:translate-x-0.5 transition-transform rtl:rotate-180" />
             </Button>
             <Button
               onClick={() => scrollTo("how")}
@@ -42,7 +43,7 @@ const Hero = () => {
               size="lg"
               className="rounded-full glass border-0 px-7 h-12 hover:bg-white/80"
             >
-              See how it works
+              {t("hero.ctaSecondary")}
             </Button>
           </div>
         </div>

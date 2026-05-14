@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Cookie } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -13,6 +14,7 @@ export const getCookieConsent = (): CookieChoice | null => {
 };
 
 const CookieConsent = () => {
+  const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -47,7 +49,7 @@ const CookieConsent = () => {
             <Cookie className="w-4 h-4 text-white" />
           </span>
           <p className="text-sm text-foreground/85 leading-snug">
-            We use cookies to improve your experience and measure traffic. You can change your mind at any time.
+            {t("cookies.text")}
           </p>
         </div>
         <div className="flex gap-2 shrink-0 w-full sm:w-auto">
@@ -57,14 +59,14 @@ const CookieConsent = () => {
             onClick={() => decide("rejected")}
             className="rounded-full hover:bg-foreground/5 flex-1 sm:flex-initial"
           >
-            Reject
+            {t("cookies.reject")}
           </Button>
           <Button
             size="sm"
             onClick={() => decide("accepted")}
             className="rounded-full bg-gradient-primary text-white border-0 hover:opacity-95 px-5 flex-1 sm:flex-initial"
           >
-            Accept
+            {t("cookies.accept")}
           </Button>
         </div>
       </div>
