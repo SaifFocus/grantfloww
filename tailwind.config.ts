@@ -101,6 +101,10 @@ export default {
           "0%, 100%": { backgroundPosition: "0% 50%" },
           "50%": { backgroundPosition: "100% 50%" },
         },
+        "glass-float": {
+          "0%, 100%": { transform: "translateY(0px) rotate(0deg)" },
+          "50%": { transform: "translateY(-22px) rotate(6deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
