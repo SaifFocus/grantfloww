@@ -14,6 +14,199 @@ export type Database = {
   }
   public: {
     Tables: {
+      grants: {
+        Row: {
+          amount_max: number | null
+          amount_min: number | null
+          application_url: string | null
+          country: string
+          created_at: string
+          currency: string | null
+          deadline: string | null
+          description: string | null
+          eligibility_tags: string[]
+          funder: string
+          id: string
+          is_active: boolean
+          name: string
+          region: string | null
+          requirements_text: string | null
+          sector_tags: string[]
+          stage_tags: string[]
+          updated_at: string
+        }
+        Insert: {
+          amount_max?: number | null
+          amount_min?: number | null
+          application_url?: string | null
+          country: string
+          created_at?: string
+          currency?: string | null
+          deadline?: string | null
+          description?: string | null
+          eligibility_tags?: string[]
+          funder: string
+          id?: string
+          is_active?: boolean
+          name: string
+          region?: string | null
+          requirements_text?: string | null
+          sector_tags?: string[]
+          stage_tags?: string[]
+          updated_at?: string
+        }
+        Update: {
+          amount_max?: number | null
+          amount_min?: number | null
+          application_url?: string | null
+          country?: string
+          created_at?: string
+          currency?: string | null
+          deadline?: string | null
+          description?: string | null
+          eligibility_tags?: string[]
+          funder?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          region?: string | null
+          requirements_text?: string | null
+          sector_tags?: string[]
+          stage_tags?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          country: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      saved_grants: {
+        Row: {
+          created_at: string
+          grant_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          grant_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          grant_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_grants_grant_id_fkey"
+            columns: ["grant_id"]
+            isOneToOne: false
+            referencedRelation: "grants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_applications: {
+        Row: {
+          created_at: string
+          deadline_reminder: string | null
+          draft_content: Json | null
+          fit_score: number | null
+          funder: string | null
+          grant_id: string | null
+          grant_name: string
+          id: string
+          idea_snapshot: Json | null
+          notes: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          deadline_reminder?: string | null
+          draft_content?: Json | null
+          fit_score?: number | null
+          funder?: string | null
+          grant_id?: string | null
+          grant_name: string
+          id?: string
+          idea_snapshot?: Json | null
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          deadline_reminder?: string | null
+          draft_content?: Json | null
+          fit_score?: number | null
+          funder?: string | null
+          grant_id?: string | null
+          grant_name?: string
+          id?: string
+          idea_snapshot?: Json | null
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_applications_grant_id_fkey"
+            columns: ["grant_id"]
+            isOneToOne: false
+            referencedRelation: "grants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       waitlist_signups: {
         Row: {
           created_at: string
@@ -40,10 +233,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -170,6 +369,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
