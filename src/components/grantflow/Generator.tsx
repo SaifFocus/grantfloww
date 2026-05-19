@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import type { GeneratorInput, GeneratedPlan } from "./types";
 import { generatePlan } from "./generatePlan";
 import OutputSection from "./OutputSection";
+import CountrySelector from "./ui/CountrySelector";
 import Reveal from "./Reveal";
 import { setLatestGeneratorInput } from "./generatorContext";
 
