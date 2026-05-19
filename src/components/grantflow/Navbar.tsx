@@ -16,6 +16,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { user, signOut } = useAuth();
   const onHome = location.pathname === "/";
 
   const scrollTo = (id: string) => {
@@ -25,6 +26,9 @@ const Navbar = () => {
     }
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  const initial = (user?.user_metadata?.full_name || user?.email || "?").charAt(0).toUpperCase();
+  const displayName = user?.user_metadata?.full_name || user?.email || "";
 
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[min(1180px,calc(100%-2rem))]">
