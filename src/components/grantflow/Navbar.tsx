@@ -47,12 +47,35 @@ const Navbar = () => {
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <LanguageSwitcher />
-          <Button
-            onClick={() => scrollTo("generator")}
-            className="rounded-full bg-gradient-primary text-white border-0 hover:opacity-95 hover:shadow-lg px-5 h-9"
-          >
-            {t("nav.cta")}
-          </Button>
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="glass-subtle rounded-full pl-1 pr-3 py-1 flex items-center gap-2 hover:bg-white/60 transition-colors">
+                  <span className="w-7 h-7 rounded-full bg-gradient-primary text-white grid place-items-center text-xs font-semibold">{initial}</span>
+                  <span className="text-xs font-medium max-w-[110px] truncate hidden sm:inline">{displayName}</span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="glass-strong rounded-2xl border-white/60 p-2 min-w-[200px]" align="end">
+                <DropdownMenuItem onClick={() => navigate("/dashboard")} className="rounded-xl cursor-pointer">
+                  <LayoutDashboard className="w-4 h-4 mr-2" /> Dashboard
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/dashboard/applications")} className="rounded-xl cursor-pointer">
+                  <FileText className="w-4 h-4 mr-2" /> My applications
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={signOut} className="rounded-xl cursor-pointer text-red-500 focus:text-red-500">
+                  <LogOut className="w-4 h-4 mr-2" /> Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button
+              onClick={() => navigate("/auth")}
+              className="rounded-full bg-gradient-primary text-white border-0 hover:opacity-95 hover:shadow-lg px-5 h-9"
+            >
+              {t("nav.cta")}
+            </Button>
+          )}
         </div>
       </nav>
     </header>
