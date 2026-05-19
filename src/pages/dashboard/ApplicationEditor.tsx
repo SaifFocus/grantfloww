@@ -45,7 +45,7 @@ const ApplicationEditor = () => {
     if (!id) return;
     setSaving(true);
     const { error } = await supabase.from("user_applications").update({
-      status, notes, draft_content: { sections },
+      status, notes, draft_content: { sections } as unknown as never,
     }).eq("id", id);
     setSaving(false);
     if (error) toast.error(error.message); else toast.success("Saved");
