@@ -39,8 +39,7 @@ const App = () => (
           </Routes>
           <CookieConsent />
         </AuthProvider>
-      </Routes>
-    </BrowserRouter>
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );
