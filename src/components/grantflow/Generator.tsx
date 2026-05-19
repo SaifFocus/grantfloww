@@ -195,12 +195,19 @@ const Generator = () => {
                   <Label className="text-sm font-medium flex items-center gap-2">
                     <Globe className="w-3.5 h-3.5 text-primary" /> Country / market
                   </Label>
-                  <Input
-                    value={form.market}
-                    onChange={(e) => setForm({ ...form, market: e.target.value })}
-                    placeholder="Sweden, Denmark, EU…"
-                    className="glass-subtle border-white/60 rounded-2xl h-11"
+                  <CountrySelector
+                    value={form.market && ["Sweden","Denmark","Norway","United Kingdom","United States","Spain","Other"].includes(form.market) ? form.market : (form.market ? "Other" : undefined)}
+                    onChange={(v) => setForm({ ...form, market: v === "Other" ? "" : v })}
+                    className="h-11"
                   />
+                  {(form.market === "" || !["Sweden","Denmark","Norway","United Kingdom","United States","Spain"].includes(form.market)) && (
+                    <Input
+                      value={form.market}
+                      onChange={(e) => setForm({ ...form, market: e.target.value })}
+                      placeholder="Specify country / region"
+                      className="glass-subtle border-white/60 rounded-2xl h-11"
+                    />
+                  )}
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between gap-2">
