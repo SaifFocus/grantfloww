@@ -20,6 +20,10 @@ const Bridge = ({ delay = "0s" }: { delay?: string }) => (
 const Index = () => {
   return (
     <main className="relative min-h-screen overflow-x-clip">
+      <Helmet>
+        <link rel="canonical" href="https://grantfloww.lovable.app/" />
+        <meta property="og:url" content="https://grantfloww.lovable.app/" />
+      </Helmet>
       <Navbar />
       <Hero />
       <Bridge />
