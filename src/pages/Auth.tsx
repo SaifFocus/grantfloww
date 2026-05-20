@@ -1,5 +1,6 @@
 import { useState, FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { Loader2, Sparkles, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -80,6 +81,15 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen relative grid place-items-center px-4 py-12">
+      <Helmet>
+        <title>Sign in or create your account — GrantFlow AI</title>
+        <meta name="description" content="Sign in to GrantFlow AI or create a free account to match your idea against real grants and draft tailored applications." />
+        <link rel="canonical" href="https://grantfloww.lovable.app/auth" />
+        <meta property="og:title" content="Sign in or create your account — GrantFlow AI" />
+        <meta property="og:description" content="Sign in to GrantFlow AI or create a free account to match your idea against real grants and draft tailored applications." />
+        <meta property="og:url" content="https://grantfloww.lovable.app/auth" />
+        <meta name="robots" content="noindex,follow" />
+      </Helmet>
       <Blobs />
       <Link to="/" className="absolute top-6 left-6 text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors">
         <ArrowLeft className="w-4 h-4" /> Back home
