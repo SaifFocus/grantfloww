@@ -1,5 +1,5 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { ArrowLeft, Sparkles, AlertCircle } from "lucide-react";
 import Navbar from "@/components/grantflow/Navbar";
 import Footer from "@/components/grantflow/Footer";
@@ -32,20 +32,16 @@ const team = [
 ];
 
 const About = () => {
-  useEffect(() => {
-    document.title = "About — GrantFlow AI";
-    const desc = "About GrantFlow AI: a public beta built by FOQUS, the Swedish branding, web design, video production and SEO agency. Meet the team and join the launch waitlist.";
-    let meta = document.querySelector('meta[name="description"]');
-    if (!meta) {
-      meta = document.createElement("meta");
-      meta.setAttribute("name", "description");
-      document.head.appendChild(meta);
-    }
-    meta.setAttribute("content", desc);
-  }, []);
-
   return (
     <main className="relative min-h-screen overflow-x-clip">
+      <Helmet>
+        <title>About GrantFlow AI — built by FOQUS in Sweden</title>
+        <meta name="description" content="About GrantFlow AI: a public beta built by FOQUS, the Swedish branding, web design, video production and SEO agency. Meet the team and join the launch waitlist." />
+        <link rel="canonical" href="https://grantfloww.lovable.app/about" />
+        <meta property="og:title" content="About GrantFlow AI — built by FOQUS in Sweden" />
+        <meta property="og:description" content="A public beta from FOQUS making grant funding accessible. Meet the team and join the launch waitlist." />
+        <meta property="og:url" content="https://grantfloww.lovable.app/about" />
+      </Helmet>
       <Navbar />
 
       {/* Hero */}

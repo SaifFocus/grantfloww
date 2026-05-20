@@ -1,0 +1,14 @@
+# GrantFlow AI
+
+> AI co-pilot that helps founders structure ideas, draft grant applications, match against a curated grant database, and build a roadmap from idea to launch.
+
+GrantFlow AI turns a rough idea into a fundable plan: it scores how well your idea fits real grants, drafts tailored applications section by section, and outlines the next steps to execute. Built by FOQUS, a Swedish branding, web design, video production and SEO agency.
+
+## Pages
+
+- [Home](/): Product overview, how it works, and the live idea-to-plan generator.
+- [About](/about): Why GrantFlow exists, the team, and the pre-launch waitlist.
+
+## Optional
+
+- [Sign in](/auth): Account access for the dashboard (not useful to crawl).

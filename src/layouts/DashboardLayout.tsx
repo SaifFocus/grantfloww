@@ -1,4 +1,5 @@
 import { Outlet, NavLink, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { LayoutDashboard, Search, FileText, LogOut, Sparkles } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,11 @@ const DashboardLayout = () => {
 
   return (
     <div className="min-h-screen flex">
+      <Helmet>
+        <title>Dashboard — GrantFlow AI</title>
+        <meta name="description" content="Your GrantFlow AI dashboard: matched grants, drafted applications, and saved opportunities." />
+        <meta name="robots" content="noindex,nofollow" />
+      </Helmet>
       <aside className="hidden md:flex w-60 shrink-0 flex-col glass-strong border-r border-white/40 p-4">
         <Link to="/" className="flex items-center gap-2 px-2 py-3 mb-4">
           <span className="w-8 h-8 rounded-xl bg-gradient-primary grid place-items-center shadow-md">
