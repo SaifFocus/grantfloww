@@ -1,0 +1,249 @@
+# Tokens and CSS
+
+## `src/index.css`
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 30 40% 98%;
+    --foreground: 230 25% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 230 25% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 230 25% 12%;
+
+    --primary: 262 70% 56%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 250 30% 96%;
+    --secondary-foreground: 230 25% 12%;
+
+    --muted: 240 20% 96%;
+    --muted-foreground: 230 12% 45%;
+
+    --accent: 330 80% 65%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 20% 90%;
+    --input: 240 20% 92%;
+    --ring: 262 70% 56%;
+
+    --radius: 1.25rem;
+
+    /* Brand palette */
+    --brand-pink: 330 90% 72%;
+    --brand-purple: 262 80% 65%;
+    --brand-blue: 220 90% 65%;
+    --brand-orange: 22 95% 65%;
+    --brand-charcoal: 230 25% 12%;
+
+    /* Gradients */
+    --gradient-hero: radial-gradient(60% 80% at 20% 10%, hsl(var(--brand-pink) / 0.35), transparent 60%),
+                     radial-gradient(60% 80% at 80% 20%, hsl(var(--brand-purple) / 0.35), transparent 60%),
+                     radial-gradient(70% 70% at 50% 100%, hsl(var(--brand-orange) / 0.25), transparent 60%);
+    --gradient-primary: linear-gradient(135deg, hsl(var(--brand-purple)) 0%, hsl(var(--brand-pink)) 60%, hsl(var(--brand-orange)) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(var(--brand-blue)) 0%, hsl(var(--brand-purple)) 100%);
+    --gradient-text: linear-gradient(135deg, hsl(230 25% 12%) 0%, hsl(262 50% 30%) 50%, hsl(330 60% 45%) 100%);
+
+    /* Glass — macOS-style glossy */
+    --glass-bg: 0 0% 100% / 0.42;
+    --glass-border: 0 0% 100% / 0.55;
+    --glass-shadow: 0 20px 60px -20px hsl(262 50% 40% / 0.22), 0 8px 24px -12px hsl(330 50% 50% / 0.14), inset 0 1px 0 0 hsl(0 0% 100% / 0.7), inset 0 -1px 0 0 hsl(0 0% 100% / 0.18);
+    --glass-shadow-lg: 0 30px 80px -20px hsl(262 60% 40% / 0.28), 0 12px 32px -12px hsl(330 60% 50% / 0.18), inset 0 1px 0 0 hsl(0 0% 100% / 0.85), inset 0 -1px 0 0 hsl(0 0% 100% / 0.22);
+    --glass-sheen: linear-gradient(180deg, hsl(0 0% 100% / 0.55) 0%, hsl(0 0% 100% / 0.18) 22%, hsl(0 0% 100% / 0.04) 55%, hsl(0 0% 100% / 0.12) 100%);
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
+    background-image:
+      radial-gradient(ellipse 80% 50% at 10% 0%, hsl(var(--brand-pink) / 0.18), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 90% 10%, hsl(var(--brand-purple) / 0.18), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 50% 100%, hsl(var(--brand-orange) / 0.12), transparent 60%);
+    background-attachment: fixed;
+  }
+
+  .font-serif {
+    font-family: 'Instrument Serif', 'Times New Roman', serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer components {
+  .glass,
+  .glass-strong,
+  .glass-subtle {
+    position: relative;
+    isolation: isolate;
+  }
+  .glass::before,
+  .glass-strong::before,
+  .glass-subtle::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--glass-sheen);
+    pointer-events: none;
+    z-index: 0;
+    mix-blend-mode: overlay;
+    opacity: 0.9;
+  }
+  .glass > *,
+  .glass-strong > *,
+  .glass-subtle > * { position: relative; z-index: 1; }
+
+  .glass {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid hsl(var(--glass-border));
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-strong {
+    background: hsl(0 0% 100% / 0.55);
+    backdrop-filter: blur(44px) saturate(200%);
+    -webkit-backdrop-filter: blur(44px) saturate(200%);
+    border: 1px solid hsl(0 0% 100% / 0.65);
+    box-shadow: var(--glass-shadow-lg);
+  }
+
+  .glass-subtle {
+    background: hsl(0 0% 100% / 0.28);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid hsl(0 0% 100% / 0.45);
+    box-shadow: 0 6px 20px -10px hsl(262 40% 30% / 0.15), inset 0 1px 0 0 hsl(0 0% 100% / 0.6);
+  }
+
+  .gradient-text {
+    background: var(--gradient-text);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+
+  .gradient-text-brand {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+
+  .blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(80px);
+    opacity: 0.55;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Bottom blur edge that clears as content scrolls */
+  .edge-blur-bottom::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 140px;
+    pointer-events: none;
+    background: linear-gradient(to top, hsl(var(--background)) 0%, hsl(var(--background) / 0.6) 50%, transparent 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    mask-image: linear-gradient(to top, black 0%, black 40%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to top, black 0%, black 40%, transparent 100%);
+  }
+
+  .lift { @apply transition-all duration-300 ease-out; }
+  .lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--glass-shadow-lg);
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+  .reveal.in-view { opacity: 1; transform: translateY(0); }
+}
+
+@layer utilities {
+  .bg-gradient-primary { background: var(--gradient-primary); }
+  .bg-gradient-accent { background: var(--gradient-accent); }
+  .bg-gradient-hero { background: var(--gradient-hero); }
+  .text-balance { text-wrap: balance; }
+  .text-pretty { text-wrap: pretty; }
+}
+```
+
+## `tailwind.config.ts` — theme.extend additions
+
+```ts
+borderRadius: {
+  lg: "var(--radius)",
+  md: "calc(var(--radius) - 2px)",
+  sm: "calc(var(--radius) - 4px)",
+},
+fontFamily: {
+  sans: ['Inter', 'system-ui', 'sans-serif'],
+  serif: ['"Instrument Serif"', 'serif'],
+},
+keyframes: {
+  "fade-in": {
+    "0%": { opacity: "0", transform: "translateY(12px)" },
+    "100%": { opacity: "1", transform: "translateY(0)" },
+  },
+  "fade-in-up": {
+    "0%": { opacity: "0", transform: "translateY(24px)" },
+    "100%": { opacity: "1", transform: "translateY(0)" },
+  },
+  "scale-in": {
+    "0%": { opacity: "0", transform: "scale(0.96)" },
+    "100%": { opacity: "1", transform: "scale(1)" },
+  },
+  "blob-float": {
+    "0%, 100%": { transform: "translate(0,0) scale(1)" },
+    "33%": { transform: "translate(30px,-20px) scale(1.05)" },
+    "66%": { transform: "translate(-20px,20px) scale(0.95)" },
+  },
+  "shimmer": {
+    "0%": { backgroundPosition: "-200% 0" },
+    "100%": { backgroundPosition: "200% 0" },
+  },
+  "gradient-shift": {
+    "0%, 100%": { backgroundPosition: "0% 50%" },
+    "50%": { backgroundPosition: "100% 50%" },
+  },
+  "glass-float": {
+    "0%, 100%": { transform: "translateY(0px) rotate(0deg)" },
+    "50%": { transform: "translateY(-22px) rotate(6deg)" },
+  },
+},
+animation: {
+  "fade-in": "fade-in 0.6s ease-out forwards",
+  "fade-in-up": "fade-in-up 0.8s ease-out forwards",
+  "scale-in": "scale-in 0.5s ease-out forwards",
+  "blob-float": "blob-float 18s ease-in-out infinite",
+  "shimmer": "shimmer 2.5s linear infinite",
+  "gradient-shift": "gradient-shift 8s ease infinite",
+  "glass-float": "glass-float 16s ease-in-out infinite",
+},
+```
+
+Keep `darkMode: ["class"]` and the standard shadcn color mapping (`border`, `input`, `ring`, `background`, `foreground`, `primary`, `secondary`, `destructive`, `muted`, `accent`, `popover`, `card`) pointing at `hsl(var(--token))`.
