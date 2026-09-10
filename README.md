@@ -48,6 +48,8 @@ The project demonstrates an approach to building AI-powered products where the t
 
 GrantFlow AI is an evolving prototype exploring the intersection of artificial intelligence, entrepreneurship, business development, and funding discovery. Future development could include integrations with grant databases, automated eligibility matching, AI-generated funding applications, business-plan generation, and personalized funding recommendations.
 
+**Website Live preview: https://grantfloww.lovable.app/**
+
 ## Development
 
 Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
